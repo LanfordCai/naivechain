@@ -1,11 +1,11 @@
 package main
 
 import (
-	"naivechain/block"
-	"time"
-	"fmt"
-	"naivechain/chainhash"
 	"errors"
+	"fmt"
+	"naivechain/block"
+	"naivechain/chainhash"
+	"time"
 )
 
 func getLatestBlock() *block.Block {
@@ -55,7 +55,7 @@ func isValidChain(chain Chain) bool {
 			continue
 		}
 
-		if block.IsValidNewBlock(b, tempChain[index - 1]) {
+		if block.IsValidNewBlock(b, tempChain[index-1]) {
 			tempChain = append(tempChain, b)
 		} else {
 			return false
@@ -64,6 +64,3 @@ func isValidChain(chain Chain) bool {
 
 	return true
 }
-
-
-

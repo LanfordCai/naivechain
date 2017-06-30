@@ -1,8 +1,8 @@
 package block
 
 import (
-	"naivechain/chainhash"
 	"fmt"
+	"naivechain/chainhash"
 )
 
 // Block ...
@@ -17,8 +17,8 @@ type Block struct {
 // GetGenesisBlock ...
 func GetGenesisBlock() *Block {
 	genesisData := []byte("God said, Let there be light.")
-	genesisHash := "2abea57aeee5ebbf316bbe98e725940dafed0a8b1937ad783443601e4f6ba67f"
-	return NewBlock(0, 1498798651301, genesisData, "0", genesisHash)
+	genesisHash := "eac681c82f7d37218ec843d6b3b0a870ad6f0bcc1b811ca2ee36bc0678e879d7"
+	return NewBlock(0, 1498798651, genesisData, "0", genesisHash)
 }
 
 // NewBlock ...
@@ -28,16 +28,16 @@ func NewBlock(index, timestamp int64, data []byte, prevHash, hash string) *Block
 
 // IsValidNewBlock ...
 func IsValidNewBlock(newBlock, previousBlock *Block) bool {
-	if newBlock.Index + 1 != previousBlock.Index {
-		println("invalid index")
+	if previousBlock.Index+1 != newBlock.Index {
+		fmt.Println("invalid index")
 		return false
 	} else if previousBlock.Hash != newBlock.PreviousHash {
-		println("invalid previousHash")
+		fmt.Println("invalid previousHash")
 		return false
 	} else if newBlock.GetHash().String() != newBlock.Hash {
-		println("invalid hash")
-		println("calculated hash is %s", newBlock.GetHash().String())
-		println("hash in block is %s", newBlock.Hash)
+		fmt.Println("invalid hash")
+		fmt.Println("calculated hash is %s", newBlock.GetHash().String())
+		fmt.Println("hash in block is %s", newBlock.Hash)
 	}
 	return true
 }
