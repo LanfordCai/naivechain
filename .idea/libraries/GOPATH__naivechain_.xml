@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;naivechain&gt;">
+    <CLASSES>
+      <root url="file://$USER_HOME$/go_workspace/src/quickstart" />
+      <root url="file://$USER_HOME$/go_workspace/src/github.com" />
+      <root url="file://$USER_HOME$/go_workspace/src/golang.org" />
+      <root url="file://$USER_HOME$/go_workspace/src/sourcegraph.com" />
+    </CLASSES>
+    <SOURCES>
+      <root url="file://$USER_HOME$/go_workspace/src/quickstart" />
+      <root url="file://$USER_HOME$/go_workspace/src/github.com" />
+      <root url="file://$USER_HOME$/go_workspace/src/golang.org" />
+      <root url="file://$USER_HOME$/go_workspace/src/sourcegraph.com" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
