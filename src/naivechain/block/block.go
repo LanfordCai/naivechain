@@ -3,7 +3,6 @@ package block
 import (
 	"fmt"
 	"naivechain/chainhash"
-	"naivechain/utils"
 	"time"
 )
 
@@ -40,7 +39,7 @@ func MineNewBlock(data []byte, prevBlock *Block) *Block {
 	for {
 		blockInfo := fmt.Sprintf("%d%d%s%d%s", newBlockIndex, nonce, prevBlock.Hash, newBlockTimestamp, data)
 		newBlockHash = chainhash.DoubleHashH([]byte(blockInfo)).String()
-		if utils.IsValidDifficulty(newBlockHash) {
+		if isValidDifficulty(newBlockHash) {
 			break
 		}
 		nonce++
@@ -61,10 +60,30 @@ func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 		fmt.Println("\ninvalid hash")
 		fmt.Println("calculated hash is %s", newBlock.GetHash().String())
 		fmt.Println("hash in block is %s", newBlock.Hash)
-	} else if !utils.IsValidDifficulty(newBlock.Hash) {
+	} else if !isValidDifficulty(newBlock.Hash) {
 		fmt.Println("\ninvalid hash for invalid difficulty")
 	}
 	return true
+}
+
+const MININING_DIFFICULTY = 6
+
+func isValidDifficulty(hash string) bool {
+	zeroCount := 0
+	for _, r := range hash {
+		if r == '0'	{
+			zeroCount++
+		} else if zeroCount < MININING_DIFFICULTY {
+			// 如果遇上非 0 值，就没必要继续算了，如果 0 的数目小于 难度，计算下一个nonce
+			return false
+		}
+
+		// 不管是否遇上非 0 值，都判断下是否找到了正确的 nonce
+		if zeroCount >= MININING_DIFFICULTY {
+			return true
+		}
+	}
+	return false
 }
 
 func (b *Block) EqualTo(b2 *Block) bool {

@@ -20,6 +20,7 @@ const (
 	QUERY_ALL
 	RESPONSE_BLOCKCHAIN
 )
+
 type ChainMsg struct {
 	MsgType int `json:"type"`
 	Data string `json:"data"`
@@ -30,7 +31,7 @@ var (
 	sockets = []*websocket.Conn{}
 	httpAddr = flag.String("api", ":3001", "api server")
 	p2pAddr = flag.String("p2p", ":6001", "p2p server")
-	initialPeers = flag.String("peers", "ws://localhost:6001", "initial peers")
+	initialPeers = flag.String("peers", "", "initial peers")
 )
 
 const (
