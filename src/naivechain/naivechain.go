@@ -81,35 +81,6 @@ func mine() {
 	}
 }
 
-/*
-func mineHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case POST:
-		data, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			fmt.Fprintf(w, "%s", err)
-			return
-		}
-		newBlock := generateNextBlock(data)
-		err = addBlock(newBlock)
-		if err != nil {
-			fmt.Fprintf(w, "%s", err)
-			return
-		}
-		msg, err := responseLatestMsg()
-		if err != nil {
-			fmt.Fprintf(w, "%s", err)
-			return
-		}
-		broadcast(msg)
-		fmt.Printf("add new block %s", newBlock)
-		json.NewEncoder(w).Encode(newBlock)
-	default:
-		http.Error(w, "", http.StatusNotFound)
-	}
-}
-*/
-
 func handleP2P(conn *websocket.Conn) {
 	defer conn.Close()
 	sockets = append(sockets, conn)

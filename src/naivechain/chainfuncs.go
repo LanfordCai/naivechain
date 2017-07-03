@@ -10,18 +10,6 @@ func getLatestBlock() *block.Block {
 	return blockchain[len(blockchain)-1]
 }
 
-/*
-func generateNextBlock(data []byte) *block.Block {
-	previousBlock := getLatestBlock()
-	nextIndex := previousBlock.Index + 1
-	nextTimestamp := time.Now().Unix()
-
-	blockInfo := fmt.Sprintf("%d%s%d%s", nextIndex, previousBlock.Hash, nextTimestamp, data)
-	nextHash := chainhash.DoubleHashH([]byte(blockInfo)).String()
-	return block.NewBlock(nextIndex, 0, nextTimestamp, data, previousBlock.Hash, nextHash)
-}
-*/
-
 func addBlock(newBlock *block.Block) error {
 	if block.IsValidNewBlock(newBlock, getLatestBlock()) {
 		blockchain = append(blockchain, newBlock)
