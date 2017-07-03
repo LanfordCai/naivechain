@@ -34,7 +34,13 @@ func addBlock(newBlock *block.Block) error {
 func replaceChain(newChain Chain) error {
 	if isValidChain(newChain) && len(newChain) > len(blockchain) {
 		println("replace current blockchain with a longer one")
-		// Broadcast
+		msg, err := responseLatestMsg()
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+		blockchain = newChain
+		broadcast(msg)
 		return nil
 	} else {
 		println("would not replace current blockchain")
@@ -44,7 +50,9 @@ func replaceChain(newChain Chain) error {
 
 func isValidChain(chain Chain) bool {
 	firstBlock := chain[0]
-	if firstBlock != block.GetGenesisBlock() {
+
+	if !firstBlock.EqualTo(block.GetGenesisBlock()) {
+		fmt.Println("invalid genesis block")
 		return false
 	}
 
@@ -58,6 +66,7 @@ func isValidChain(chain Chain) bool {
 		if block.IsValidNewBlock(b, tempChain[index-1]) {
 			tempChain = append(tempChain, b)
 		} else {
+			fmt.Printf("invalid block %s", b)
 			return false
 		}
 	}

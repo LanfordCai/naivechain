@@ -7,11 +7,11 @@ import (
 
 // Block ...
 type Block struct {
-	Index        int64
-	Timestamp    int64
-	Data         []byte
-	PreviousHash string
-	Hash         string
+	Index        int64  `json:"index"`
+	Timestamp    int64  `json:"timestamp"`
+	Data         []byte `json:"data"`
+	PreviousHash string `json:"prev_hash"`
+	Hash         string `json:"hash"`
 }
 
 // GetGenesisBlock ...
@@ -40,6 +40,17 @@ func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 		fmt.Println("hash in block is %s", newBlock.Hash)
 	}
 	return true
+}
+
+func (b *Block) EqualTo(b2 *Block) bool {
+	if b.Index == b2.Index &&
+	b.Timestamp == b2.Timestamp &&
+	string(b.Data) == string(b2.Data) &&
+	b.PreviousHash == b2.PreviousHash &&
+	b.Hash == b2.Hash {
+		return true
+	}
+	return false
 }
 
 func (b *Block) GetHash() chainhash.Hash {
