@@ -3,6 +3,8 @@ package block
 import (
 	"fmt"
 	"naivechain/chainhash"
+	"naivechain/utils"
+	"time"
 )
 
 // Block ...
@@ -28,6 +30,25 @@ func NewBlock(index, nonce, timestamp int64, data []byte, prevHash, hash string)
 	return &Block{index, nonce, timestamp, data, prevHash, hash}
 }
 
+// MineNewBlock ...
+func MineNewBlock(data []byte, prevBlock *Block) *Block {
+	newBlockIndex := prevBlock.Index + 1
+	newBlockTimestamp := time.Now().Unix()
+
+	var nonce int64
+	var newBlockHash string
+	for {
+		blockInfo := fmt.Sprintf("%d%d%s%d%s", newBlockIndex, nonce, prevBlock.Hash, newBlockTimestamp, data)
+		newBlockHash = chainhash.DoubleHashH([]byte(blockInfo)).String()
+		if utils.IsValidDifficulty(newBlockHash) {
+			break
+		}
+		nonce++
+	}
+
+	return NewBlock(newBlockIndex, nonce, newBlockTimestamp, data, prevBlock.Hash, newBlockHash)
+}
+
 // IsValidNewBlock ...
 func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 	if previousBlock.Index+1 != newBlock.Index {
@@ -40,6 +61,8 @@ func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 		fmt.Println("\ninvalid hash")
 		fmt.Println("calculated hash is %s", newBlock.GetHash().String())
 		fmt.Println("hash in block is %s", newBlock.Hash)
+	} else if !utils.IsValidDifficulty(newBlock.Hash) {
+		fmt.Println("\ninvalid hash for invalid difficulty")
 	}
 	return true
 }
@@ -49,6 +72,7 @@ func (b *Block) EqualTo(b2 *Block) bool {
 	b.Timestamp == b2.Timestamp &&
 	string(b.Data) == string(b2.Data) &&
 	b.PreviousHash == b2.PreviousHash &&
+	b.Nonce == b2.Nonce &&
 	b.Hash == b2.Hash {
 		return true
 	}

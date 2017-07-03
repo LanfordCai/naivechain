@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/websocket"
 	"flag"
 	"strings"
-	"naivechain/mining"
 )
 
 // Chain ...
@@ -65,7 +64,7 @@ func mine() {
 
 	for {
 		latestBlock := getLatestBlock()
-		newBlock := mining.MineNewBlock([]byte("data"), latestBlock)
+		newBlock := block.MineNewBlock([]byte("data"), latestBlock)
 		err := addBlock(newBlock)
 		if err != nil {
 			fmt.Printf("add new block error: %s\n", err.Error())
