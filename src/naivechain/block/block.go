@@ -8,6 +8,7 @@ import (
 // Block ...
 type Block struct {
 	Index        int64  `json:"index"`
+	Nonce		 int64  `json:"nonce"`
 	Timestamp    int64  `json:"timestamp"`
 	Data         []byte `json:"data"`
 	PreviousHash string `json:"prev_hash"`
@@ -17,13 +18,14 @@ type Block struct {
 // GetGenesisBlock ...
 func GetGenesisBlock() *Block {
 	genesisData := []byte("God said, Let there be light.")
-	genesisHash := "eac681c82f7d37218ec843d6b3b0a870ad6f0bcc1b811ca2ee36bc0678e879d7"
-	return NewBlock(0, 1498798651, genesisData, "0", genesisHash)
+	genesisHash := "00002ab42ca54dc1eda206d5789d10a280093f1b25378c4ee11595b734c72bce"
+	prevHash := "0000000000000000000000000000000000000000000000000000000000000000"
+	return NewBlock(0, 115725, 1499054804, genesisData, prevHash, genesisHash)
 }
 
 // NewBlock ...
-func NewBlock(index, timestamp int64, data []byte, prevHash, hash string) *Block {
-	return &Block{index, timestamp, data, prevHash, hash}
+func NewBlock(index, nonce, timestamp int64, data []byte, prevHash, hash string) *Block {
+	return &Block{index, nonce, timestamp, data, prevHash, hash}
 }
 
 // IsValidNewBlock ...
@@ -35,7 +37,7 @@ func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 		fmt.Println("invalid previousHash")
 		return false
 	} else if newBlock.GetHash().String() != newBlock.Hash {
-		fmt.Println("invalid hash")
+		fmt.Println("\ninvalid hash")
 		fmt.Println("calculated hash is %s", newBlock.GetHash().String())
 		fmt.Println("hash in block is %s", newBlock.Hash)
 	}
@@ -55,9 +57,10 @@ func (b *Block) EqualTo(b2 *Block) bool {
 
 func (b *Block) GetHash() chainhash.Hash {
 	index := b.Index
+	nonce := b.Nonce
 	timestamp := b.Timestamp
 	data := b.Data
 	previousBlockHash := b.PreviousHash
-	blockInfo := fmt.Sprintf("%d%s%d%s", index, previousBlockHash, timestamp, data)
+	blockInfo := fmt.Sprintf("%d%d%s%d%s", index, nonce, previousBlockHash, timestamp, data)
 	return chainhash.DoubleHashH([]byte(blockInfo))
 }

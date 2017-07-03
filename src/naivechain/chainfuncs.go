@@ -19,7 +19,7 @@ func generateNextBlock(data []byte) *block.Block {
 
 	blockInfo := fmt.Sprintf("%d%s%d%s", nextIndex, previousBlock.Hash, nextTimestamp, data)
 	nextHash := chainhash.DoubleHashH([]byte(blockInfo)).String()
-	return block.NewBlock(nextIndex, nextTimestamp, data, previousBlock.Hash, nextHash)
+	return block.NewBlock(nextIndex, 0, nextTimestamp, data, previousBlock.Hash, nextHash)
 }
 
 func addBlock(newBlock *block.Block) error {

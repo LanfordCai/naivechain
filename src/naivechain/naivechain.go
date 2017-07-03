@@ -5,12 +5,12 @@ import (
 	"naivechain/block"
 
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/websocket"
 	"flag"
 	"strings"
+	"naivechain/mining"
 )
 
 // Chain ...
@@ -60,6 +60,29 @@ func blockchainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func mine() {
+	fmt.Println("Start mine")
+
+	for {
+		latestBlock := getLatestBlock()
+		newBlock := mining.MineNewBlock([]byte("data"), latestBlock)
+		err := addBlock(newBlock)
+		if err != nil {
+			fmt.Printf("add new block error: %s\n", err.Error())
+			// 当前挖出的块不对，继续挖
+			continue
+		}
+		msg, err := responseLatestMsg()
+		if err != nil {
+			fmt.Printf("response latest msg error: %s\n", err.Error())
+			break
+		}
+		broadcast(msg)
+		fmt.Printf("add new block %s\n", newBlock)
+	}
+}
+
+/*
 func mineHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case POST:
@@ -86,6 +109,7 @@ func mineHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusNotFound)
 	}
 }
+*/
 
 func handleP2P(conn *websocket.Conn) {
 	defer conn.Close()
@@ -148,7 +172,6 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 var dialer *websocket.Dialer
 
 func connectToPeers(peersAddr []string) {
-	fmt.Printf("peers %s", peersAddr)
 	for _, peer := range peersAddr {
 		if peer == "" {
 			continue
@@ -290,10 +313,13 @@ func main() {
 		http.ListenAndServe(*p2pAddr, socketMux)
 	}()
 
+	go mine()
+
 	httpMux := http.NewServeMux()
 	httpMux.HandleFunc("/", indexHandler)
 	httpMux.HandleFunc("/blockchain", blockchainHandler)
-	httpMux.HandleFunc("/mine", mineHandler)
+	//	httpMux.HandleFunc("/mine", mineHandler)
 	fmt.Printf("listen and server http on %s\n", *httpAddr)
 	http.ListenAndServe(*httpAddr, httpMux)
+
 }
