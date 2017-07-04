@@ -10,6 +10,8 @@ import (
 	"github.com/gorilla/websocket"
 	"flag"
 	"strings"
+	"naivechain/mempool"
+	"io/ioutil"
 )
 
 // Chain ...
@@ -51,6 +53,21 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, naivechain!")
 }
 
+func transactionHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case POST:
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "", http.StatusBadRequest)
+		}
+		tx := mempool.Transaction{string(body)}
+		mempool.TxQueue = append(mempool.TxQueue, tx)
+		// TODO: 需要把交易广播给其他节点
+	default:
+		http.Error(w, "", http.StatusNotFound)
+	}
+}
+
 func blockchainHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case GET:
@@ -65,11 +82,15 @@ func mine() {
 
 	for {
 		latestBlock := getLatestBlock()
-		newBlock := block.MineNewBlock([]byte("data"), latestBlock)
+		// 这个 err 应该不会出现的吧，先忽略
+		transactions, transactionData, _ := mempool.FetchTransactionData()
+		newBlock := block.MineNewBlock(transactionData, latestBlock)
 		err := addBlock(newBlock)
 		if err != nil {
 			fmt.Printf("add new block error: %s\n", err.Error())
-			// 当前挖出的块不对，继续挖
+			// 当前挖出的块不对，把交易还回去，继续挖
+			mempool.TxQueue = append(mempool.TxQueue, transactions...)
+			// TODO: 需要把已经添加到链上的交易从本地交易池中去掉
 			continue
 		}
 		msg, err := responseLatestMsg()
@@ -81,6 +102,7 @@ func mine() {
 		fmt.Printf("add new block %s\n", newBlock)
 	}
 }
+
 
 func handleP2P(conn *websocket.Conn) {
 	defer conn.Close()
@@ -289,6 +311,7 @@ func main() {
 	httpMux := http.NewServeMux()
 	httpMux.HandleFunc("/", indexHandler)
 	httpMux.HandleFunc("/blockchain", blockchainHandler)
+	httpMux.HandleFunc("/transaction", transactionHandler)
 	//	httpMux.HandleFunc("/mine", mineHandler)
 	fmt.Printf("listen and server http on %s\n", *httpAddr)
 	http.ListenAndServe(*httpAddr, httpMux)
