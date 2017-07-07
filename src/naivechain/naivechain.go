@@ -56,13 +56,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func transactionHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case POST:
-		body, err := ioutil.ReadAll(r.Body)
+		_, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "", http.StatusBadRequest)
 		}
-		tx := mempool.Transaction{string(body)}
-		mempool.TxQueue = append(mempool.TxQueue, tx)
 		// TODO: 需要把交易广播给其他节点
+		// TODO: 需要把交易存储到本地交易池中
 	default:
 		http.Error(w, "", http.StatusNotFound)
 	}
@@ -83,13 +82,13 @@ func mine() {
 	for {
 		latestBlock := getLatestBlock()
 		// 这个 err 应该不会出现的吧，先忽略
-		transactions, transactionData, _ := mempool.FetchTransactionData()
+		_, transactionData, _ := mempool.FetchTransactionData()
 		newBlock := block.MineNewBlock(transactionData, latestBlock)
 		err := addBlock(newBlock)
 		if err != nil {
 			fmt.Printf("add new block error: %s\n", err.Error())
-			// 当前挖出的块不对，把交易还回去，继续挖
-			mempool.TxQueue = append(mempool.TxQueue, transactions...)
+			// TODO: 当前挖出的块不对，把交易还回去，继续挖
+			// mempool.TxQueue = append(mempool.TxQueue, transactions...)
 			// TODO: 需要把已经添加到链上的交易从本地交易池中去掉
 			continue
 		}
