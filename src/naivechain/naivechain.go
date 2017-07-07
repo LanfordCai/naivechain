@@ -70,6 +70,7 @@ func transactionHandler(w http.ResponseWriter, r *http.Request) {
 func blockchainHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case GET:
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(blockchain)
 	default:
 		http.Error(w, "", http.StatusNotFound)
@@ -301,7 +302,7 @@ func main() {
 	socketMux := http.NewServeMux()
 	socketMux.HandleFunc("/", socketHandler)
 	go func() {
-		fmt.Printf("listen and server websocket on %s\n", *p2pAddr)
+		fmt.Printf("listen and serve websocket on %s\n", *p2pAddr)
 		http.ListenAndServe(*p2pAddr, socketMux)
 	}()
 
@@ -312,7 +313,7 @@ func main() {
 	httpMux.HandleFunc("/blockchain", blockchainHandler)
 	httpMux.HandleFunc("/transaction", transactionHandler)
 	//	httpMux.HandleFunc("/mine", mineHandler)
-	fmt.Printf("listen and server http on %s\n", *httpAddr)
+	fmt.Printf("listen and serve http on %s\n", *httpAddr)
 	http.ListenAndServe(*httpAddr, httpMux)
 
 }
