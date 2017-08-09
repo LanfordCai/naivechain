@@ -6,6 +6,9 @@ import (
 	"naivechain/block"
 )
 
+
+
+
 func getLatestBlock() *block.Block {
 	return blockchain[len(blockchain)-1]
 }

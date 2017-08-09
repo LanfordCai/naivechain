@@ -66,6 +66,7 @@ func IsValidNewBlock(newBlock, previousBlock *Block) bool {
 	return true
 }
 
+
 const TARGET_DIFFICULTY = 6
 
 func isValidDifficulty(hash string) bool {
