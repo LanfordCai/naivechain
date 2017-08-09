@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"naivechain/block"
+	"naivechain/chain"
 
 	"encoding/json"
 	"net/http"
@@ -14,8 +15,6 @@ import (
 	"io/ioutil"
 )
 
-// Chain ...
-type Chain []*block.Block
 
 const (
 	QUERY_LATEST = iota
@@ -29,7 +28,7 @@ type ChainMsg struct {
 }
 
 var (
-	blockchain = Chain{block.GetGenesisBlock()}
+
 	sockets = []*websocket.Conn{}
 	httpAddr = flag.String("api", ":3001", "api server")
 	p2pAddr = flag.String("p2p", ":6001", "p2p server")
