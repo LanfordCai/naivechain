@@ -33,6 +33,14 @@ const (
 	HALVE_SUBSIDY_AFTER_BLOCKS_NUM = 210000
 )
 
+func Max(int1, int2 int) int {
+	if int1 > int2 {
+		return int1
+	}
+	return int2
+}
+
+
 func Serialize(v interface{}) ([]byte, error) {
 	data, err := json.Marshal(v)
 	if err != nil {

@@ -9,12 +9,12 @@ import (
 
 // Block ...
 type Block struct {
-	Version      int64                     `json:"version"`
-	PreviousHash string                    `json:"prev_hash"`
-	MerkleHash   string                    `json:"merkle_hash"`
-	Timestamp    int64                     `json:"timestamp"`
-	Bits         int64                     `json:"bits"`
-	Nonce        int64                     `json:"nonce"`
+	Version      int64                      `json:"version"`
+	PreviousHash string                     `json:"prev_hash"`
+	MerkleHash   string                     `json:"merkle_hash"`
+	Timestamp    int64                      `json:"timestamp"`
+	Bits         int64                      `json:"bits"`
+	Nonce        int64                      `json:"nonce"`
 	Txns         []*transaction.Transaction `json:"txns"`
 }
 
@@ -23,7 +23,6 @@ func (b *Block) Header() string {
 }
 
 func (b *Block) Index() string {
-	// 应该用 DoubleHash
 	return chainhash.HashH([]byte(b.Header())).String()
 }
 
@@ -39,7 +38,7 @@ func GenesisBlock() *Block {
 	merkleHash := "7118894203235a955a908c0abfc6d8fe6edec47b0a04ce1bf7263da3b4366d22"
 	prevHash := "0000000000000000000000000000000000000000000000000000000000000000"
 
-	return &Block{0, prevHash, merkleHash, 1499054804, 24,10126761, txns}
+	return &Block{0, prevHash, merkleHash, 1499054804, 24, 10126761, txns}
 }
 
 // MineNewBlock ...
